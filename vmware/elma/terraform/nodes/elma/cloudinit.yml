@@ -1,0 +1,53 @@
+#cloud-config
+write_files:
+  - path: /etc/cloud/cloud.cfg.d/90_dpkg.cfg
+    owner: root:root
+    permissions: "0644"
+    content: |
+      datasource_list: [ VMware, None ]
+  - path: /etc/sysctl.d/99-custom.conf
+    content: |
+      vm.swappiness = 0
+      net.ipv4.conf.all.forwarding = 1
+      net.ipv6.conf.all.disable_ipv6 = 0
+      net.bridge.bridge-nf-call-iptables = 1
+      net.bridge.bridge-nf-call-arptables = 1
+      net.bridge.bridge-nf-call-ip6tables = 0
+bootcmd:
+  - sudo apt update
+  - sudo apt -y install ssh-import-id dialog
+timezone: Europe/Moscow
+packages:
+  - lsb-release
+  - open-vm-tools
+  - curl
+  - apt-transport-https
+  - ca-certificates
+  - gpg
+  - git
+  - telnet
+groups:
+  - admins
+system_info:
+  default_user:
+    groups: [admins]
+users:
+  - name: ${username}
+    groups: sudo, users, admins
+    ssh-authorized-keys:
+      - ${file("~/.ssh/id_rsa-appuser.pub")}
+    shell: /bin/bash
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    lock_passwd: false
+    passwd: $y$j9T$uZM9OC3lSIw9AsYG1a5UU1$ITUakFHTJst/DqUIcd9/wYwF8NPDJYUfBgO9kVxnOoB
+disable_root: true
+ssh_pwauth: yes
+package_update: true
+package_upgrade: true
+package_reboot_if_required: false
+power_state:
+  timeout: 1800
+  mode: reboot
+runcmd:
+  - chown -R ${username}:${username} /home/${username}
+final_message: "The system is finally up..."

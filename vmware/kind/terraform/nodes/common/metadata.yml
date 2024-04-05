@@ -1,0 +1,16 @@
+# Ref: https://cloudinit.readthedocs.io/en/22.4.2/topics/network-config-format-v2.html
+instance-id: ${instance_id}
+local-hostname: ${hostname}
+hostname: ${hostname}.${domain}
+network:
+  version: 2
+  ethernets:
+    ens192:
+      %{ if dhcp == "true" }dhcp4: true
+      %{ else }addresses:
+        - ${ip}/${netmask}
+      gateway4: ${gw}
+      nameservers:
+        search: ${search}
+        addresses: ${dns}
+      %{ endif }

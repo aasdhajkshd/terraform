@@ -1,0 +1,54 @@
+#cloud-config
+write_files:
+- path: /etc/cloud/cloud.cfg.d/90_dnf.cfg
+  owner: root:root
+  permissions: "0644"
+  content: |
+    datasource_list: [ VMware, None ]
+- path: /etc/sysctl.d/99-customer.conf
+  content: |
+    vm.swappiness = 0
+    net.ipv4.conf.all.forwarding = 1
+    net.ipv6.conf.all.disable_ipv6 = 0
+    net.bridge.bridge-nf-call-iptables = 1
+    net.bridge.bridge-nf-call-arptables = 1
+    net.bridge.bridge-nf-call-ip6tables = 0
+- path: /etc/selinux/config
+  encoding: b64
+  content: CiMgVGhpcyBmaWxlIGNvbnRyb2xzIHRoZSBzdGF0ZSBvZiBTRUxpbnV4IG9uIHRoZSBzeXN0ZW0uCiMgU0VMSU5VWD0gY2FuIHRha2Ugb25lIG9mIHRoZXNlIHRocmVlIHZhbHVlczoKIyAgICAgZW5mb3JjaW5nIC0gU0VMaW51eCBzZWN1cml0eSBwb2xpY3kgaXMgZW5mb3JjZWQuCiMgICAgIHBlcm1pc3NpdmUgLSBTRUxpbnV4IHByaW50cyB3YXJuaW5ncyBpbnN0ZWFkIG9mIGVuZm9yY2luZy4KIyAgICAgZGlzYWJsZWQgLSBObyBTRUxpbnV4IHBvbGljeSBpcyBsb2FkZWQuClNFTElOVVg9ZGlzYWJsZWQKIyBTRUxJTlVYVFlQRT0gY2FuIHRha2Ugb25lIG9mIHRoZXNlIHRocmVlIHZhbHVlczoKIyAgICAgdGFyZ2V0ZWQgLSBUYXJnZXRlZCBwcm9jZXNzZXMgYXJlIHByb3RlY3RlZCwKIyAgICAgbWluaW11bSAtIE1vZGlmaWNhdGlvbiBvZiB0YXJnZXRlZCBwb2xpY3kuIE9ubHkgc2VsZWN0ZWQgcHJvY2Vzc2VzIGFyZSBwcm90ZWN0ZWQuIAojICAgICBtbHMgLSBNdWx0aSBMZXZlbCBTZWN1cml0eSBwcm90ZWN0aW9uLgpTRUxJTlVYVFlQRT10YXJnZXRlZAoKCg==
+  owner: root:root
+  permissions: '0644'
+bootcmd:
+- sudo yum update
+timezone: Europe/Moscow
+packages:
+- e2fsprogs
+- iproute
+- net-tools
+- procps
+- oracle-epel-release-el8
+groups:
+- admins
+system_info:
+  default_user:
+    groups: [admins]
+users:
+- name: ${username}
+  groups: wheel, users, admins
+  ssh-authorized-keys:
+    - ${file("~/.ssh/id_rsa-appuser.pub")}
+  shell: /bin/bash
+  sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+  lock_passwd: false
+  passwd: $y$j9T$uZM9OC3lSIw9AsYG1a5UU1$ITUakFHTJst/DqUIcd9/wYwF8NPDJYUfBgO9kVxnOoB
+disable_root: true
+ssh_pwauth: yes
+package_update: true
+package_upgrade: true
+package_reboot_if_required: true
+power_state:
+  timeout: 1800
+  mode: reboot
+runcmd:
+- chown -R ${username}:${username} /home/${username}
+final_message: "The system is finally up..."

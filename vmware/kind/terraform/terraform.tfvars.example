@@ -1,0 +1,45 @@
+##################################################################################
+# VARIABLES
+##################################################################################
+
+# Credentials
+
+vsphere_env = {
+    server   = "vcenter.sphere.local"
+    user     = "administrator@vsphere.local"
+    password = ""
+    insecure = true
+}
+
+# vSphere Settings
+
+vsphere_datacenter          = "Datacenter"
+vsphere_cluster             = "Staging"
+vsphere_folder              = "Temporary"
+vsphere_network             = "DSwitch-Network"
+vsphere_content_library     = "Default"
+vsphere_content_library_ovf = "debian-12-bookwork-cloud-init"
+
+# Custom Settings
+
+project_name = "kuber-2023-12"
+ipv4_address_network = "10.10.10.0/24"
+
+vms = {
+    kind = {
+    count = 1
+    vcpu = 16
+    vmem = 32768
+    disk_size = 20
+    vmname = "kind"
+    datastore = "datastore"
+    template = "_Debian-12"
+    dhcp = false
+    ip = "10.10.10.111"
+    netmask = "24"
+    gw = "10.10.10.1"
+    hostname = "kind"
+    username = "debian"
+    password = "password"
+  }
+}

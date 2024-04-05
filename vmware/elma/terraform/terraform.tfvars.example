@@ -1,0 +1,60 @@
+##################################################################################
+# VARIABLES
+##################################################################################
+
+# Credentials
+
+vsphere_env = {
+    server   = "vcenter.vsphere.local"
+    user     = "administrator@vsphere.local"
+    password = ""
+    insecure = true
+}
+
+# vSphere Settings
+
+vsphere_datacenter          = "TL"
+vsphere_cluster             = "Staging"
+vsphere_folder              = "ITSM"
+vsphere_network             = "DSwitch-10.10.10.0_24"
+vsphere_content_library     = "Default"
+
+# Custom Settings
+
+project_name = "ITSM"
+ipv4_address_network = "10.10.10.0/24"
+
+vms = {
+    elma = {
+    count = 1
+    vcpu = 8
+    vmem = 16384
+    disk_size = 150
+    vmname = "elma"
+    datastore = "DS-1RZN25J-3"
+    template = "_Debian-11"
+    dhcp = false
+    ip = "10.10.10.114"
+    netmask = "24"
+    gw = "10.10.10.1"
+    hostname = "elma"
+    username = "debian"
+    password = "password"
+  },
+    simpleone = {
+    count = 1
+    vcpu = 4
+    vmem = 16384
+    disk_size = 100
+    vmname = "simpleone"
+    datastore = "DS-1RZN25J-3"
+    template = "_OL-8.9"
+    dhcp = false
+    ip = "10.10.10.115"
+    netmask = "24"
+    gw = "10.10.10.1"
+    hostname = "s1"
+    username = "oracle"
+    password = "password"
+  }
+}
